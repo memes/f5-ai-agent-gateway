@@ -1,6 +1,6 @@
 {
-    "name": "memes-repo-template",
-    "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
+    "name": "memes-f5-ai-agent-gateway",
+    "image": "mcr.microsoft.com/devcontainers/base:debian",
     "features": {
         "ghcr.io/devcontainers-extra/features/direnv:1": {},
         "ghcr.io/devcontainers-extra/features/opentofu:1": {},
@@ -12,35 +12,25 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "ms-python.python",
-                "ms-python.debugpy",
-                "ms-python.vscode-python-envs",
                 "redhat.vscode-yaml",
                 "streetsidesoftware.code-spell-checker",
-                "tamasfe.event-better-toml",
                 "opentofu.vscode-opentofu",
                 "esbenp.prettier-vscode",
                 "DavidAnson.vscode-markdownlint",
-                "hashicorp.hcl",
-                "charliermarsh.ruff",
-                "astral-sh.ty"
+                "hashicorp.hcl"
             ]
         }
     },
     "containerUser": "vscode",
-    "containerEnv": {
-        "UV_LINK_MODE": "copy"
-    },
     "updateRemoteUserUID": true,
     "mounts": [
         "source=${localEnv:HOME}/.config/gcloud,target=/home/vscode/.config/gcloud,type=bind,consistency=cached"
     ],
     "onCreateCommand": {
-        "install-deps": "sudo sh -c 'apt update && apt install -y --no-install-recommends fzf shellcheck && rm -rf /var/lib/apt/lists/*'",
-        "install-uv": ["/usr/local/py-utils/bin/pipx", "install", "uv"],
+        "install-deps": "sudo sh -c 'apt update && apt install -y --no-install-recommends fzf pipx && rm -rf /var/lib/apt/lists/*'i && pipx install pre-commit",
         "modify-default-omz-plugins": ["/usr/bin/sed", "-i.onCreateCommand" , "-e", "/^plugins=/c\\plugins=(git dotenv)", "/home/vscode/.zshrc"]
     },
     "postCreateCommand": {
-        "uv-sync": "uv sync --link-mode=copy --all-extras --all-packages && uv run pre-commit install --hook-type commit-msg --hook-type pre-commit"
+        "pre-commit": "pre-commit install --hook-type commit-msg --hook-type pre-commit"
     }
 }

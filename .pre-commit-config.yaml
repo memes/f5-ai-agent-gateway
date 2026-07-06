@@ -12,14 +12,6 @@ repos:
           - file
           - yaml
         entry: yamllint --strict
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.18
-    hooks:
-      - id: ruff-check
-        args:
-          - --fix
-          - --exit-non-zero-on-fix
-      - id: ruff-format
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.22.1
     hooks:
@@ -50,7 +42,6 @@ repos:
       - id: check-toml
       - id: detect-private-key
       - id: end-of-file-fixer
-      # TODO: @memes - remove/modify if push to main is allowed
       - id: no-commit-to-branch
         args:
           - -b
@@ -60,12 +51,3 @@ repos:
     rev: v1.37.0
     hooks:
       - id: talisman-commit
-  - repo: local
-    hooks:
-      - id: ty
-        name: ty check
-        entry: uv run ty check
-        language: python
-        types:
-          - python
-        pass_filenames: true
