@@ -1,0 +1,33 @@
+#cloud-config
+# Launches the F5 AI service extension as a container, exposing ports 443 and 8080.
+# yamllint disable rule:line-length
+# yaml-language-server: $schema=https://raw.githubusercontent.com/canonical/cloud-init/main/cloudinit/config/schemas/versions.schema.cloud-config.json
+---
+write_files:
+  - path: /etc/systemd/system/service-extension.service
+    permissions: '0644'
+    owner: root
+    content: |
+      [Unit]
+      Description=Launch a service-extension in a container
+      After=network-online.target
+      FailureAction=none
+      StartLimitIntervalSec=10
+      StartLimitBurst=5
+
+      [Service]
+      Type=simple
+      Environment="HOME=/var/run/service-extension"
+      ExecStartPre=/usr/bin/docker-credential-gcr configure-docker --registries=${join(",", docker_credential_registries)}
+      ExecStart=/usr/bin/docker run --rm --pull always --publish 80:80/tcp --publish 443:443/tcp --publish 8080:8080/tcp --name service-extension ${service_extension_container_image}
+      ExecStop=/usr/bin/docker stop service-extension
+      ExecStopPost=/usr/bin/docker rm service-extension
+      RestartSec=1
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable --now service-extension
