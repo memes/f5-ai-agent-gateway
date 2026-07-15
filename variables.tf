@@ -87,19 +87,16 @@ identifier, or a public repo identifier.
 EOD
 }
 
-variable "public_dns" {
-  type = object({
-    base_domain     = string
-    managed_zone_id = optional(string)
-  })
-  nullable = true
+variable "internal_dns_domain" {
+  type     = string
+  nullable = false
   validation {
-    condition     = can(regex("^(?:[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$", var.public_dns.base_domain)) && (coalesce(var.public_dns.managed_zone_id, "unspecified") == "unspecified" ? true : can(regex("projects/[a-z][a-z0-9-]{4,28}[a-z0-9]/managedZones/[a-z][a-z0-9-]{0,61}[a-z0-9]?$", var.public_dns.managed_zone_id)))
-    error_message = "The base_domain field of public_dns must be a valid DNS zone name, and, if provided, the Cloud DNS Managed Zone id must be valid."
+    condition     = can(regex("^(?:[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$", var.internal_dns_domain))
+    error_message = "If not empty, internal_dns_domain must be a valid DNS zone name."
   }
+  default     = "f5-ai-agent-gateway.test"
   description = <<-EOD
-  An optional value, `base_domain` sets the root for public TLS certificate creation and DNS challenges, and becomes the
-  base for a VPC private DNS zone for GKE services (`internal.{public_dns.base_domain}`). An optional `managed_zone_id`
-  value containing a Cloud DNS Managed Zone identifier can be provided to have the DNS challenges added automatically.
+  Sets the root domain for the private Cloud DNS zone used for non-public, internal testing records. A value is required
+  and must be a valid DNS domain; default value is 'f5-ai-agent-gateway.test'.
   EOD
 }

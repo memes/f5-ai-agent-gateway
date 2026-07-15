@@ -1,6 +1,6 @@
 locals {
-  internal_dns_zone = format("%s.", coalesce(try(var.public_dns.base_domain, null), format("%s.arpa", var.name)))
-  extension_dns     = format("extension.%s", local.internal_dns_zone)
+  internal_dns_domain = endswith(var.internal_dns_domain, ".") ? var.internal_dns_domain : format("%s.", var.internal_dns_domain)
+  extension_dns       = format("extension.%s", local.internal_dns_domain)
 }
 
 
@@ -27,7 +27,7 @@ resource "google_dns_managed_zone" "internal" {
   project       = var.project_id
   name          = var.name
   description   = "F5 AI Agent Gateway service extension testing"
-  dns_name      = local.internal_dns_zone
+  dns_name      = local.internal_dns_domain
   labels        = var.labels
   visibility    = "private"
   force_destroy = true

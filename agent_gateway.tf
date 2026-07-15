@@ -20,7 +20,7 @@ resource "google_network_services_agent_gateway" "egress" {
 
     dns_peering_config {
       domains = [
-        local.internal_dns_zone,
+        local.internal_dns_domain,
       ]
       target_project = google_compute_network.network.project
       target_network = google_compute_network.network.id
