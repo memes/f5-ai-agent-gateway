@@ -20,21 +20,6 @@ resource "google_compute_subnetwork" "primary" {
   ipv6_access_type           = null
 }
 
-# Create a VPC subnet for regional Google proxy-LBs with /23 CIDR.
-resource "google_compute_subnetwork" "proxy" {
-  project                    = var.project_id
-  name                       = format("%s-proxy", var.name)
-  network                    = google_compute_network.network.self_link
-  ip_cidr_range              = "172.17.0.0/23"
-  private_ip_google_access   = false
-  private_ipv6_google_access = null
-  region                     = var.region
-  stack_type                 = "IPV4_ONLY"
-  ipv6_access_type           = null
-  purpose                    = "REGIONAL_MANAGED_PROXY"
-  role                       = "ACTIVE"
-}
-
 # Create a VPC subnet for PSC attached service providers
 resource "google_compute_subnetwork" "psc" {
   project                    = var.project_id
@@ -93,29 +78,6 @@ resource "google_compute_firewall" "allow_primary" {
   priority  = 900
   source_ranges = [
     google_compute_subnetwork.primary.ip_cidr_range,
-  ]
-  target_service_accounts = [
-    google_service_account.sa.email,
-  ]
-
-  allow {
-    protocol = "tcp"
-    ports = [
-      80,
-      443,
-      8080,
-    ]
-  }
-}
-
-resource "google_compute_firewall" "allow_proxy" {
-  project   = var.project_id
-  name      = format("%s-allow-proxy", var.name)
-  network   = google_compute_network.network.self_link
-  direction = "INGRESS"
-  priority  = 900
-  source_ranges = [
-    google_compute_subnetwork.proxy.ip_cidr_range,
   ]
   target_service_accounts = [
     google_service_account.sa.email,
