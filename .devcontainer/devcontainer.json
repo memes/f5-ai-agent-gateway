@@ -1,7 +1,10 @@
 {
     "name": "memes-f5-ai-agent-gateway",
-    "image": "mcr.microsoft.com/devcontainers/base:debian",
+    "dockerFile": "Dockerfile",
     "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
+            "moby": false
+        },
         "ghcr.io/devcontainers-extra/features/direnv:1": {},
         "ghcr.io/devcontainers-extra/features/opentofu:1": {},
         "ghcr.io/devcontainers-extra/features/terraform-docs:1": {},
@@ -22,6 +25,9 @@
         }
     },
     "containerUser": "vscode",
+    "containerEnv": {
+        "CLOUDSDK_CORE_CUSTOM_CA_CERTS_FILE": "/etc/ssl/certs/ca-certificates.crt"
+    },
     "updateRemoteUserUID": true,
     "mounts": [
         "source=${localEnv:HOME}/.config/gcloud,target=/home/vscode/.config/gcloud,type=bind,consistency=cached"
