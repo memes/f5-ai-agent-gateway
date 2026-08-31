@@ -2,7 +2,7 @@
     "name": "memes-f5-ai-agent-gateway",
     "dockerFile": "Dockerfile",
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
+        "ghcr.io/devcontainers/features/docker-in-docker:4.1.0": {
             "moby": false
         },
         "ghcr.io/devcontainers-extra/features/direnv:1": {},
